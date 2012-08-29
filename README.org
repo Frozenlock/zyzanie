@@ -1,0 +1,56 @@
+* Zyzanie
+
+Emacs-like key bindings in your browser!
+
+And like emacs, you can rebind them on-the-fly!
+
+=C-g= will cancel any started key sequence.
+
+* Usage
+
+#+BEGIN_SRC clojure
+(global-set-key "C-c a" #(js/alert "Are you a global person?"))
+
+(local-set-key "C-c a" #(js/alert "Local!") (domina/by-id "some-id"))
+#+END_SRC
+
+In the previous example, if you try "C-c a" from inside the dom
+element "some-id", you will get the dialog:
+: Local!
+
+Anywhere else, "C-c a" will give you:
+: Are you a global person?
+
+You can easily make the same key sequence have different behavior
+for different dom elements.
+
+The local dom element must be focusable, otherwise the event won't be
+fired by it.
+
+You can use any dom element selector; here I use domina. The only
+important part is to select the element that will fire the events. (A
+CSS selector might not be enough.)
+
+** Rebinding
+
+You can safely rebind any key sequence without the need to unset them
+first.
+
+Power to the REPL!
+
+** Unset Key Sequence
+
+You can unset key sequences with the following:
+
+#+BEGIN_SRC clojure
+(global-unset-key "C-c a")
+
+(local-set-key "C-c a" (domina/by-id "some-id"))
+#+END_SRC
+
+
+* License
+
+Copyright © 2012 Frozenlock
+
+Distributed under the Eclipse Public License, the same as Clojure.
