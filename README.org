@@ -8,6 +8,8 @@ And like emacs, you can rebind them on-the-fly!
 
 * Usage
 
+Simply add =[zyzanie "0.1.0"]= in your project dependencies.
+
 #+BEGIN_SRC clojure
 (global-set-key "C-c a" #(js/alert "Are you a global person?"))
 
@@ -28,8 +30,7 @@ The local dom element must be focusable, otherwise the event won't be
 fired by it.
 
 You can use any dom element selector; here I use domina. The only
-important part is to select the element that will fire the events. (A
-CSS selector might not be enough.)
+important part is to select the element that will fire the events.
 
 ** Rebinding
 
