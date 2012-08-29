@@ -46,7 +46,7 @@ You can unset key sequences with the following:
 #+BEGIN_SRC clojure
 (global-unset-key "C-c a")
 
-(local-set-key "C-c a" (domina/by-id "some-id"))
+(local-unset-key "C-c a" (domina/by-id "some-id"))
 #+END_SRC
 
 
