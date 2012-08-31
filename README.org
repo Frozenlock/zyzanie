@@ -1,4 +1,4 @@
-* Zyzanie
+* Zizanie
 
 Emacs-like key bindings in your browser!
 
@@ -7,7 +7,7 @@ And like emacs, you can rebind them on-the-fly!
 =C-g= will cancel any started key sequence.
 
 * Usage
-Simply add =[zyzanie "0.1.1"]= in your project dependencies.
+Simply add =[zizanie "0.1.1"]= in your project dependencies.
 
 ** Key binding
    #+BEGIN_SRC clojure
@@ -16,11 +16,11 @@ Simply add =[zyzanie "0.1.1"]= in your project dependencies.
 (local-set-key "C-c a" #(js/alert "Local!") (domina/by-id "some-id"))
    #+END_SRC
 
-   In the previous example, if you try =C-c= =a= from inside the dom
+   In the previous example, if you try =C-c= + =a= from inside the dom
    element "some-id", you will get the dialog:
 : Local!
 
-   Anywhere else, =C-c= =a= will give you:
+   Anywhere else, =C-c= +  =a= will give you:
 : Are you a global person?
 
    You can easily make the same key sequence have different behavior
@@ -36,20 +36,22 @@ Simply add =[zyzanie "0.1.1"]= in your project dependencies.
    set key function:
    
    Special keys:
+
    "up" "del" "end" "esc" "tab" "down" "home" "left" "clear" "enter"
    "right" "space" "pagedown" "backspace" "delete" "escape" "pageup"
    "return"
 
    Modifiers:
+
    "C" "M" "S" "f1" "f2" "f3" "f4" "f5" "f6" "f7" "f8" "f9" "alt"
    "cmd" "f10" "f11" "f12" "f13" "f14" "f15" "f16" "f17" "f18" "f19"
    "ctrl" "shift" "command" "control" "option"
 
    Mouse buttons:
+   
    "mouseleft" "mouseright" "mousemiddle" "mouse0" "mouse1" "mouse2
 
-   Every other key uses its own character as a name. For example: "a"
-   -> the key =a=.
+   Every other key uses its own character as a name. For example: "a" is the key =a=.
 
 ** Accessing raw events
 
@@ -71,7 +73,7 @@ Simply add =[zyzanie "0.1.1"]= in your project dependencies.
    65 is the keyCode for the letter "a".
 
 ** Preventing default
-   Zyzanie will automatically prevent any default when a keystroke can
+   Zizanie will automatically prevent any default when a keystroke can
    be a potential key sequence. In order words, it will not greedily
    prevent everything, but only what is really necessary to be able to
    input a currently valid key sequence.
