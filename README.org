@@ -7,37 +7,92 @@ And like emacs, you can rebind them on-the-fly!
 =C-g= will cancel any started key sequence.
 
 * Usage
+Simply add =[zyzanie "0.1.1"]= in your project dependencies.
 
-Simply add =[zyzanie "0.1.0"]= in your project dependencies.
-
-#+BEGIN_SRC clojure
+** Key binding
+   #+BEGIN_SRC clojure
 (global-set-key "C-c a" #(js/alert "Are you a global person?"))
 
 (local-set-key "C-c a" #(js/alert "Local!") (domina/by-id "some-id"))
-#+END_SRC
+   #+END_SRC
 
-In the previous example, if you try "C-c a" from inside the dom
-element "some-id", you will get the dialog:
+   In the previous example, if you try =C-c= =a= from inside the dom
+   element "some-id", you will get the dialog:
 : Local!
 
-Anywhere else, "C-c a" will give you:
+   Anywhere else, =C-c= =a= will give you:
 : Are you a global person?
 
-You can easily make the same key sequence have different behavior
-for different dom elements.
+   You can easily make the same key sequence have different behavior
+   for different dom elements.
 
-The local dom element must be focusable, otherwise the event won't be
-fired by it.
+   The local dom element must be focusable, otherwise the event won't be
+   fired by it.
 
-You can use any dom element selector; here I use domina. The only
-important part is to select the element that will fire the events.
+   You can use any dom element selector; here I use domina. The only
+   important part is to select the element that will fire the events.
+** Key names
+   Here are the possible key names you can use in a global or local
+   set key function:
+   
+   Special keys:
+   "up" "del" "end" "esc" "tab" "down" "home" "left" "clear" "enter"
+   "right" "space" "pagedown" "backspace" "delete" "escape" "pageup"
+   "return"
+
+   Modifiers:
+   "C" "M" "S" "f1" "f2" "f3" "f4" "f5" "f6" "f7" "f8" "f9" "alt"
+   "cmd" "f10" "f11" "f12" "f13" "f14" "f15" "f16" "f17" "f18" "f19"
+   "ctrl" "shift" "command" "control" "option"
+
+   Mouse buttons:
+   "mouseleft" "mouseright" "mousemiddle" "mouse0" "mouse1" "mouse2
+
+   Every other key uses its own character as a name. For example: "a"
+   -> the key =a=.
+
+** Accessing raw events
+
+   The last raw event that triggered a complete key sequence is
+   transmitted to the bound function. For example:
+
+   #+BEGIN_SRC clojure
+   (defn log-event [event] (domina/log (str "You pressed "(.-keyCode event))))
+   #+END_SRC
+
+   (A simple logging function to see if we really captured the event.)
+
+   #+BEGIN_SRC clojure
+   (global-set-key "C-a" #(log-event %))
+   #+END_SRC
+
+   Then, when =C-a= is pressed, we get in the javascript console:
+   : You pressed 65
+   65 is the keyCode for the letter "a".
+
+** Preventing default
+   Zyzanie will automatically prevent any default when a keystroke can
+   be a potential key sequence. In order words, it will not greedily
+   prevent everything, but only what is really necessary to be able to
+   input a currently valid key sequence.
+
+   For example, let's bind =C-mouseright= to a log message:
+   #+BEGIN_SRC clojure
+   (global-set-key "C-mouseright" #(domina/log "Right button!"))
+   #+END_SRC
+
+   Now, if you right click, you will see the context menu as usual.
+   But because the =Ctrl= and =right-click= is present in a key
+   sequence, it will disable the context menu for this particular key
+   chord. Try it now: =Ctrl= + =right-click=. Tada! No context menu!
+   
+   If you add a local key sequence, every other dom element will
+   remain unaffected.
 
 ** Rebinding
 
-You can safely rebind any key sequence without the need to unset them
-first.
-
-Power to the REPL!
+   You can safely rebind any key sequence without the need to unset them
+   first.
 
 ** Unset Key Sequence
 
@@ -49,7 +104,7 @@ You can unset key sequences with the following:
 (local-unset-key "C-c a" (domina/by-id "some-id"))
 #+END_SRC
 
-
+Power to the REPL!
 * License
 
 Copyright © 2012 Frozenlock

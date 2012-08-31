@@ -21,6 +21,30 @@
 ;;; entire history for every element.
 
 
+;; ================ Hook functions ================
+
+(def !completed-keysequence-hooks
+  "Any function stored here will be called after every completed key
+sequence"
+  (atom []))
+
+(defn add-hook! [hook-fn]
+  (swap! !completed-keysequence-hooks #(conj % hook-fn)))
+
+(defn call-hooks [event]
+  (doseq [func @!completed-keysequence-hooks]
+    (func envent)))
+
+
+;; There is no way to compare if two functions are equal. Thus, we
+;; can't remove a precise function once it's in the hooks list.
+
+(defn remove-all-hooks []
+  (reset! !completed-keysequence-hooks []))
+
+
+;; ================ Main ================
+
 (def !key-maps
   "A place where every key-binding is stored"
   (atom {}))
@@ -39,6 +63,17 @@
             "cmd" 91
             "command" 91}
           (for [k (range 1 20)] [(str "f" k) (+ 111 k)])))
+
+
+;; Can't use the button numbers directly; they could clash with the
+;; keys numbers.
+(def mouse-buttons
+  {"mouse0" :m0
+   "mouseleft" :m0
+   "mouse2" :m2
+   "mouseright" :m2
+   "mouse1" :m1
+   "mousemiddle" :m1})
 
 (def special-ks
   { "backspace" 8
@@ -76,6 +111,7 @@
   [key]
   (or (get special-ks key)
       (get modifiers key)
+      (get mouse-buttons key)
       (.charCodeAt (.toUpperCase key) 0)))
 
 
@@ -151,14 +187,11 @@
              (some #(some (fn [a] (= chord a)) %) (keys key-bindings)))
     (events/prevent-default event)))
 
-  
-(defn- key-down! [event]
-  "At each keydown, check if we match a key sequence. If yes, reset
-the current key sequence and call the associated command."
+(defn- validate-keysequence
+  "Check if we match a key sequence. If yes, reset the current key
+  sequence add call the associated command."[key event]
   (let [raw-event (events/raw-event event)
-        element (events/current-target event)
-        key (canonicalize-command-key (.-keyCode raw-event))]
-    ;(dom/log (str "You pressed: " key)) ;debug only
+        element (events/current-target event)]
     (if (modifier? key)
       (set-modifier! key element true)
       (let [chord (get-chord key element)
@@ -171,10 +204,35 @@ the current key sequence and call the associated command."
           (do
             (events/stop-propagation event)
             (reset-keyseq!)
-            (handler))
+            (handler raw-event)
+            (call-hooks raw-event))
           (when (modifier-pressed? element)
             (set-keyseq! chord element)))))))
 
+(defn- key-down! [event]
+  "At each keydown, check if we match a key sequence. If yes, reset
+the current key sequence and call the associated command."
+  (let [raw-event (events/raw-event event)
+        key (canonicalize-command-key (.-keyCode raw-event))]
+    (validate-keysequence key event)))
+
+
+
+(defn- mouse-down! [event]
+  "Similar to key-down!, but this time we get which mouse button was
+pressed."
+  (let [raw-event (events/raw-event event)
+        key (keyword (str "m" (.-button raw-event)))]
+    (validate-keysequence key event)))
+
+(defn- remove-context-menu-if-needed
+  "If the mouse right button is needed for a local keybinding, remove
+  the context menu" [event]
+  (let [element (events/current-target event)
+        local-keymap (get @!key-maps element)
+        chord (get-chord :m2 element)]
+    (when (some #(some (fn [a] (= chord a)) %) (keys local-keymap))
+      (events/prevent-default event))))
 
 
 (defn- clear-modifier! [event]
@@ -194,7 +252,11 @@ the current key sequence and call the associated command."
         (concat 
         (events/listen! element :keydown key-down!)
         (events/listen! element :keyup clear-modifier!)
+        (events/listen! element :mousedown mouse-down!)
+        (events/listen! element :contextmenu remove-context-menu-if-needed)
         (events/listen! element :focus reset-all!))))
+;; We can't use the :click event because some browsers only use it for
+;; the left mouse button.
 
 (defn- remove-listeners! [listener-keys]
   (doseq [l-key listener-keys]
