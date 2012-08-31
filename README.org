@@ -1,4 +1,4 @@
-* Zizanie
+* Zyzanie
 
 Emacs-like key bindings in your browser!
 
@@ -73,7 +73,7 @@ Simply add =[zizanie "0.1.1"]= in your project dependencies.
    65 is the keyCode for the letter "a".
 
 ** Preventing default
-   Zizanie will automatically prevent any default when a keystroke can
+   Zyzanie will automatically prevent any default when a keystroke can
    be a potential key sequence. In order words, it will not greedily
    prevent everything, but only what is really necessary to be able to
    input a currently valid key sequence.
