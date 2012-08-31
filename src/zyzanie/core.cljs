@@ -26,21 +26,37 @@
 (def !completed-keysequence-hooks
   "Any function stored here will be called after every completed key
 sequence"
-  (atom []))
+  (atom {}))
 
-(defn add-hook! [hook-fn]
-  (swap! !completed-keysequence-hooks #(conj % hook-fn)))
+(defn add-local-hook! [hook-fn element]
+  (let [current-local-hook (get @!completed-keysequence-hooks element)]
+    (swap! !completed-keysequence-hooks
+           #(merge % {element (conj current-local-hook hook-fn)}))))
 
-(defn call-hooks [event]
-  (doseq [func @!completed-keysequence-hooks]
+(defn add-global-hook! [hook-fn]
+  (add-local-hook! hook-fn events/root-element))
+
+
+(defn- call-local-hooks [event element]
+  (doseq [func (get @!completed-keysequence-hooks element)]
     (func envent)))
 
+(defn call-hooks [event element]
+  (call-local-hooks event element) ;local hooks
+  (when-not (= element events/root-element) ;global hooks (don't call again if we were already global)
+    (call-local-hooks event events/root-element)))
 
 ;; There is no way to compare if two functions are equal. Thus, we
 ;; can't remove a precise function once it's in the hooks list.
 
-(defn remove-all-hooks []
-  (reset! !completed-keysequence-hooks []))
+(defn remove-all-hooks! []
+  (reset! !completed-keysequence-hooks {}))
+
+(defn remove-local-hooks! [element]
+  (swap! !completed-keysequence-hooks #(dissoc % element)))
+
+(defn remove-global-hooks! []
+  (remove-local-hooks! events/root-element))
 
 
 ;; ================ Main ================
@@ -205,7 +221,7 @@ sequence"
             (events/stop-propagation event)
             (reset-keyseq!)
             (handler raw-event)
-            (call-hooks raw-event))
+            (call-hooks raw-event element))
           (when (modifier-pressed? element)
             (set-keyseq! chord element)))))))
 

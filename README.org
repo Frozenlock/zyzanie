@@ -7,7 +7,7 @@ And like emacs, you can rebind them on-the-fly!
 =C-g= will cancel any started key sequence.
 
 * Usage
-Simply add =[zyzanie "0.1.2"]= in your project dependencies.
+Simply add =[zyzanie "0.1.3"]= in your project dependencies.
 
 ** Key binding
    #+BEGIN_SRC clojure
@@ -107,6 +107,38 @@ You can unset key sequences with the following:
 #+END_SRC
 
 Power to the REPL!
+** Hooks
+   You can add functions that will be called each time a key sequence
+   is completed (this includes =C-g=) with:
+
+   #+BEGIN_SRC clojure
+(add-global-hook! #(domina/log "This is called after each valid key-sequence"))
+   #+END_SRC
+
+   You can also add a hook for local key-sequences only.
+   #+BEGIN_SRC clojure
+(add-local-hook! #(domina/log "This is called after each valid local key-sequence") (domina/by-id "some-id"))
+   #+END_SRC
+
+   Unfortunately there's isn't a way to easily select a precise hook
+   and remove it, so you'll have to be careful with the hooks you
+   add. If you make a mistake, you can remove them with these
+   functions:
+   #+BEGIN_SRC clojure
+(remove-local-hooks! (domina/by-id "some-id")) ;remove local hooks
+   #+END_SRC
+
+   #+BEGIN_SRC clojure
+(remove-global-hooks!) ;remove global hooks
+   #+END_SRC
+
+   #+BEGIN_SRC clojure
+(remove-all-hooks!) ;remove all hooks
+   #+END_SRC
+
+   As with the key binding functions, the hooks will receive the
+   raw-events as their argument.
+
 * License
 
 Copyright © 2012 Frozenlock
