@@ -37,19 +37,19 @@ Simply add =[zizanie "0.1.1"]= in your project dependencies.
    
    Special keys:
 
-   =up= =del= =end= =esc= =tab= =down= =home= =left= =clear= =enter=
-   =right= =space= =pagedown= =backspace= =delete= =escape= =pageup=
-   =return=
+   =up=, =del=, =end=, =esc=, =tab=, =down=, =home=, =left=, =clear=, =enter=,
+   =right=, =space=, =pagedown=, =backspace=, =delete=, =escape=, =pageup=,
+   =return=.
 
    Modifiers:
 
-   =C= =M= =S= =f1= =f2= =f3= =f4= =f5= =f6= =f7= =f8= =f9= =alt=
-   =cmd= =f10= =f11= =f12= =f13= =f14= =f15= =f16= =f17= =f18= =f19=
-   =ctrl= =shift= =command= =control= =option=
+   =C=, =M=, =S=, =f1=, =f2=, =f3=, =f4=, =f5=, =f6=, =f7=, =f8=, =f9=, =alt=,
+   =cmd=, =f10=, =f11=, =f12=, =f13=, =f14=, =f15=, =f16=, =f17=, =f18=, =f19=,
+   =ctrl=, =shift=, =command=, =control=, =option=.
 
    Mouse buttons:
    
-   =mouseleft= =mouseright= =mousemiddle= =mouse0= =mouse1= =mouse2
+   =mouseleft=, =mouseright=, =mousemiddle=, =mouse0=, =mouse1=, =mouse2=
 
    Every other key uses its own character as a name. For example: "a" is the key =a=.
 
@@ -84,9 +84,9 @@ Simply add =[zizanie "0.1.1"]= in your project dependencies.
    #+END_SRC
 
    Now, if you right click, you will see the context menu as usual.
-   But because the =Ctrl= and =right-click= are present in a key
+   But because the =Ctrl= and =mouseright= are present in a key
    sequence, it will disable the context menu for this particular key
-   chord. Try it now: =Ctrl= + =right-click=. Tada! No context menu!
+   chord. Try it now: =Ctrl= + =mouseright=. Tada! No context menu!
    
    If you add a local key sequence, every other dom element will
    remain unaffected.
