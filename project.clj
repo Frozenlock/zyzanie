@@ -1,4 +1,4 @@
-(defproject zyzanie "0.1.3"
+(defproject zyzanie "0.1.4"
   :description "Emacs-like keybinding for your browser. (Clojurescript)"
   :source-path "src"
   :license {:name "Eclipse Public License"

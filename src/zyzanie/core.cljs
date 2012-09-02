@@ -220,8 +220,8 @@ sequence"
           (do
             (events/stop-propagation event)
             (reset-keyseq!)
-            (handler raw-event)
-            (call-hooks raw-event element))
+            (handler event)
+            (call-hooks event element))
           (when (modifier-pressed? element)
             (set-keyseq! chord element)))))))
 
