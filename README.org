@@ -53,6 +53,18 @@ Simply add =[zyzanie "0.1.4"]= in your project dependencies.
 
    Every other key uses its own character as a name. For example: "a" is the key =a=.
 
+** Adding key notifications
+   If you want to see which keys are recorded as a key sequence
+   /while/ you are pressing them, call the function
+   =add-notifications= from the =zyzanie.notification= namespace, as shown here:
+
+   #+BEGIN_SRC clojure
+   (zyzanie.notification/add-notifications)
+   #+END_SRC
+
+   [[./zyzanie/raw/master/notification.jpg]]
+
+   To remove them, use =remove-notifications= in the same namespace.
 ** Accessing events
 
    The last event that triggered a complete key sequence is

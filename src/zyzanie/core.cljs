@@ -5,7 +5,7 @@
             [clojure.string :as string]))
 
 
-;;; Highly inspired by https://github.com/AndreasKostler/dyscord
+;;; Inspired by https://github.com/AndreasKostler/dyscord
 
 ;;; We use the bubble phases of event propegation (from the event node
 ;;; upward) to go throught all possible elements. This simulate the
@@ -48,6 +48,7 @@ sequence"
 
 ;; There is no way to compare if two functions are equal. Thus, we
 ;; can't remove a precise function once it's in the hooks list.
+;; Perhaps we could return the vector position?
 
 (defn remove-all-hooks! []
   (reset! !completed-keysequence-hooks {}))
@@ -129,6 +130,7 @@ sequence"
       (get modifiers key)
       (get mouse-buttons key)
       (.charCodeAt (.toUpperCase key) 0)))
+;; keyCode will give us the code the for the uppercase letter
 
 
 (defn- canonicalize-keyseq
@@ -179,17 +181,17 @@ sequence"
 
 
 
-(def keyseq (atom {}))
+(def !keyseq (atom {}))
 
 (defn- set-keyseq!
   "Set the key sequence history by dividing it by element"
   [chord element]
-  (swap! keyseq #(merge % {element (conj (or (get % element) []) chord)})))
+  (swap! !keyseq #(merge % {element (conj (or (get % element) []) chord)})))
 
 
                            
 (defn- reset-keyseq! []
-  (reset! keyseq {}))
+  (reset! !keyseq {}))
 
 (defn- modifier-pressed? [element]
   (some (fn [[_ v]] (true? v)) (get @mods element)))
@@ -203,6 +205,8 @@ sequence"
              (some #(some (fn [a] (= chord a)) %) (keys key-bindings)))
     (events/prevent-default event)))
 
+(def !last-valid-keyseq (atom []))
+
 (defn- validate-keysequence
   "Check if we match a key sequence. If yes, reset the current key
   sequence add call the associated command."[key event]
@@ -211,19 +215,20 @@ sequence"
     (if (modifier? key)
       (set-modifier! key element true)
       (let [chord (get-chord key element)
-            total-keyseq (conj (get @keyseq element) chord)
+            total-keyseq (conj (get @!keyseq element) chord)
             key-bindings (get @!key-maps element)
-            handler (or (get key-bindings [chord]);check if current chord match
-                        (get key-bindings total-keyseq))];check with previous chords
+            found-key-handler (or (find key-bindings [chord]);check if current chord match
+                                  (find key-bindings total-keyseq))];check with previous chords
         (prevent-default-if-needed key-bindings chord event)
-        (if-not (nil? handler) ;; see if key-seq is complete
-          (do
+        (when-not (nil? found-key-handler);; see if key-seq is complete
+          (let [handler (val found-key-handler)]
             (events/stop-propagation event)
+            (reset! !last-valid-keyseq (first found-key-handler))
+            (call-hooks event element)
             (reset-keyseq!)
-            (handler event)
-            (call-hooks event element))
-          (when (modifier-pressed? element)
-            (set-keyseq! chord element)))))))
+            (handler event)))
+        (when (modifier-pressed? element)
+          (set-keyseq! chord element))))))
 
 (defn- key-down! [event]
   "At each keydown, check if we match a key sequence. If yes, reset
