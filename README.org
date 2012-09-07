@@ -7,7 +7,7 @@ And like emacs, you can rebind them on-the-fly!
 =C-g= will cancel any started key sequence.
 
 * Usage
-Simply add =[zyzanie "0.1.4"]= in your project dependencies.
+Simply add =[zyzanie "0.1.5"]= in your project dependencies.
 
 ** Key binding
    #+BEGIN_SRC clojure
@@ -59,7 +59,11 @@ Simply add =[zyzanie "0.1.4"]= in your project dependencies.
    =add-notifications= from the =zyzanie.notification= namespace, as shown here:
 
    #+BEGIN_SRC clojure
-   (zyzanie.notification/add-notifications)
+(ns my.namespace
+  (:require [zyzanie.core :as z]
+            [zyzanie.notification :as zn]))
+
+(zn/add-notifications)
    #+END_SRC
 
    [[./zyzanie/raw/master/notification.jpg]]

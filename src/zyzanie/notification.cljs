@@ -35,9 +35,9 @@
 (defn- translate-all-keyseq [keyseqs]
   (clojure.string/join (map #(add-div (names-from-keyseq %)) keyseqs)))
 
-(def- keyseq-siren (s/continuous-siren-factory))
+(def keyseq-siren (s/continuous-siren-factory))
 
-(def- completed-keyseq-siren (s/continuous-siren-factory))
+(def completed-keyseq-siren (s/continuous-siren-factory))
 
 (defn- show-current-keyseq []
   (let [keyseqs (vals @z/!keyseq)]
