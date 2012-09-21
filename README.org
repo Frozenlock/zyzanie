@@ -7,7 +7,7 @@ And like emacs, you can rebind them on-the-fly!
 =C-g= will cancel any started key sequence.
 
 * Usage
-Simply add =[zyzanie "0.1.5"]= in your project dependencies.
+Simply add =[zyzanie "0.1.6"]= in your project dependencies.
 
 ** Key binding
    #+BEGIN_SRC clojure
@@ -117,7 +117,6 @@ Simply add =[zyzanie "0.1.5"]= in your project dependencies.
    first.
 
 ** Unset Key Sequence
-
 You can unset key sequences with the following:
 
 #+BEGIN_SRC clojure
@@ -126,7 +125,6 @@ You can unset key sequences with the following:
 (local-unset-key "C-c a" (domina/by-id "some-id"))
 #+END_SRC
 
-Power to the REPL!
 ** Hooks
    You can add functions that will be called each time a key sequence
    is completed (this includes =C-g=) with:
@@ -159,6 +157,14 @@ Power to the REPL!
    As with the key binding functions, the hooks will receive the event
    as their argument.
 
+** Side effects
+   In order to be able to trigger local events with the keyboard, the
+   items (div, span...) on which the key bindings are attached must be focusable.
+   
+   Zyzanie will solve this problem by giving them a *tabindex* of 0.
+   (Focusable by JS). Also, these items will be automatically focused
+   when hovered with the mouse. Be carefull if you use the :focus
+   pseudoclass in your CSS!
 * License
 
 Copyright © 2012 Frozenlock

@@ -2,7 +2,9 @@
   (:require [clojure.browser.dom :as dom]
             [domina :as domina]
             [domina.events :as events]
-            [clojure.string :as string]))
+            [enfocus.core :as ef]
+            [clojure.string :as string])
+  (:require-macros [enfocus.macros :as em]))
 
 
 ;;; Inspired by https://github.com/AndreasKostler/dyscord
@@ -268,7 +270,30 @@ pressed."
   (reset-mods!))
 
 
+(defn auto-focus-hover
+  "Make the element focusable and auto focus when mouse over. This
+  enable the keyboard to fire local events." [element]
+  (let [raw-el (first (domina/nodes element))]
+    (when-not (domina/attr raw-el :zyzanie)
+      (when-not (domina/attr raw-el :tabindex)
+        (domina/set-attr! element :tabindex "0"));focusable using JS
+      (ef/at element (em/listen :mouseenter #(.focus raw-el)))
+      (ef/at element (em/listen :mouseleave #(.blur raw-el)))
+      (domina/set-attr! element :zyzanie "true"))))
+
+(defn remove-auto-focus-hover
+  "Remove the :mouseenter and :mouseleave event. Unfortunately Enfocus
+  doesn't provide event keys like Domina, so we can't be precise."[element]
+  (let [raw-element (first (domina/nodes element))]
+    (when (domina/attr raw-element :zyzanie)
+      (ef/at element (em/remove-listener :mouseenter :mouseleave))
+      (when (= (domina/attr raw-element :tabindex) "0")
+        (domina/remove-attr! raw-element :tabindex))
+      (domina/remove-attr! raw-element :zyzanie))))
+
+
 (defn- add-local-listeners! [element]
+  (auto-focus-hover element);because we need to be able to capture keyboard event
   (into []
         (concat 
         (events/listen! element :keydown key-down!)
@@ -279,7 +304,8 @@ pressed."
 ;; We can't use the :click event because some browsers only use it for
 ;; the left mouse button.
 
-(defn- remove-listeners! [listener-keys]
+(defn- remove-listeners! [listener-keys element]
+  (remove-auto-focus-hover element)
   (doseq [l-key listener-keys]
     (events/unlisten-by-key! l-key)))
 
@@ -308,7 +334,7 @@ pressed."
         (swap! !key-maps #(let [local-binding (get % element)
                                     new-binding (dissoc local-binding k)
                                     empty-? (empty? (dissoc new-binding :listeners))]
-                                (when empty-? (remove-listeners! (:listeners local-binding)))
+                                (when empty-? (remove-listeners! (:listeners local-binding) element))
                                 (merge % {element
                                           (if empty-?
                                             (dissoc new-binding :listeners)
