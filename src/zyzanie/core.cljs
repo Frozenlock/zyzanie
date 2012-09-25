@@ -41,7 +41,7 @@ sequence"
 
 (defn- call-local-hooks [event element]
   (doseq [func (get @!completed-keysequence-hooks element)]
-    (func envent)))
+    (func event)))
 
 (defn call-hooks [event element]
   (call-local-hooks event element) ;local hooks
@@ -278,7 +278,7 @@ pressed."
       (when-not (domina/attr raw-el :tabindex)
         (domina/set-attr! element :tabindex "0"));focusable using JS
       (ef/at element (em/listen :mouseenter #(.focus raw-el)))
-      (ef/at element (em/listen :mouseleave #(.blur raw-el)))
+      ;(ef/at element (em/listen :mouseleave #(.blur raw-el))) ;activated too often for our needs
       (domina/set-attr! element :zyzanie "true"))))
 
 (defn remove-auto-focus-hover
@@ -286,7 +286,7 @@ pressed."
   doesn't provide event keys like Domina, so we can't be precise."[element]
   (let [raw-element (first (domina/nodes element))]
     (when (domina/attr raw-element :zyzanie)
-      (ef/at element (em/remove-listener :mouseenter :mouseleave))
+      (ef/at element (em/remove-listener :mouseenter))
       (when (= (domina/attr raw-element :tabindex) "0")
         (domina/remove-attr! raw-element :tabindex))
       (domina/remove-attr! raw-element :zyzanie))))
@@ -365,5 +365,5 @@ dom ELEMENT."
 
 ;; Really necessary, otherwise you NEED to complete a valid
 ;; keysequence in order to clear the keysequence history.
-(global-set-key "C-g" (fn [] ((reset-all! _)
+(global-set-key "C-g" (fn [] ((reset-all! nil)
                               (domina/log "C-g: Cancel!"))))

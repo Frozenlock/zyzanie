@@ -1,10 +1,10 @@
-(defproject zyzanie "0.1.6"
+(defproject zyzanie "0.1.7"
   :description "Emacs-like keybinding for your browser. (Clojurescript)"
   :source-path "src"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.4.0"]
-                 [siren "0.1.6"]
+                 [siren "0.1.7"]
                  [enfocus "1.0.0-alpha3"]
                  [domina "1.0.0"]]                
   :profiles {:dev {:dependencies [[org.clojure/clojurescript "0.0-1450"]
