@@ -7,7 +7,7 @@ And like emacs, you can rebind them on-the-fly!
 =C-g= will cancel any started key sequence.
 
 * Usage
-Simply add =[zyzanie "0.1.6"]= in your project dependencies.
+Simply add =[zyzanie "0.1.7"]= in your project dependencies.
 
 ** Key binding
    #+BEGIN_SRC clojure
