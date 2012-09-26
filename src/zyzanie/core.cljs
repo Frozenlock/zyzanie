@@ -276,9 +276,9 @@ pressed."
   (let [raw-el (first (domina/nodes element))]
     (when-not (domina/attr raw-el :zyzanie)
       (when-not (domina/attr raw-el :tabindex)
-        (domina/set-attr! element :tabindex "0"));focusable using JS
+        (domina/set-attr! element :tabindex "-1"));focusable using JS
       (ef/at element (em/listen :mouseenter #(.focus raw-el)))
-      ;(ef/at element (em/listen :mouseleave #(.blur raw-el))) ;activated too often for our needs
+      (ef/at element (em/listen :mouseleave #(.blur raw-el)))
       (domina/set-attr! element :zyzanie "true"))))
 
 (defn remove-auto-focus-hover
