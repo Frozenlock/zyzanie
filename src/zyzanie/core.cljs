@@ -293,7 +293,6 @@ pressed."
 
 
 (defn- add-local-listeners! [element]
-  (auto-focus-hover element);because we need to be able to capture keyboard event
   (into []
         (concat 
         (events/listen! element :keydown key-down!)
@@ -305,7 +304,6 @@ pressed."
 ;; the left mouse button.
 
 (defn- remove-listeners! [listener-keys element]
-  (remove-auto-focus-hover element)
   (doseq [l-key listener-keys]
     (events/unlisten-by-key! l-key)))
 
