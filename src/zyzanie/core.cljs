@@ -158,17 +158,8 @@ sequence"
 
 (def modifier {16 false 18 false 17 false 91 false})
 
-(def mods (atom {}))
-
 (defn- reset-mods! []
-  (reset! mods {}))
-
-(defn- set-modifier!
-  "Set the modifier history by dividing it by element"
-  [key element boolean]
-  (swap! mods #(merge % {element
-                         (assoc (or (get % element)
-                                    modifier) key boolean)})))
+  (reset! mods modifier))
 
 (defn- modifier?
   "Return true if key is a modifier."
@@ -179,7 +170,7 @@ sequence"
 (defn- get-chord
   "If a modifier has been pressed recently, add it to the set."
   [key element]
-  (set (conj (map first (filter (fn [[_ v]] (true? v)) (get @mods element))) key)))
+  (set (conj (map first (filter (fn [[_ v]] (true? v)) @mods)) key)))
 
 
 
@@ -196,7 +187,7 @@ sequence"
   (reset! !keyseq {}))
 
 (defn- modifier-pressed? [element]
-  (some (fn [[_ v]] (true? v)) (get @mods element)))
+  (some (fn [[_ v]] (true? v)) @mods)))
 
 
 (defn- prevent-default-if-needed
@@ -216,7 +207,7 @@ sequence"
   (let [raw-event (events/raw-event event)
         element (events/current-target event)]
     (if (modifier? key)
-      (set-modifier! key element true)
+      (swap! mods assoc key true)
       (let [chord (get-chord key element)
             total-keyseq (conj (get @!keyseq element) chord)
             key-bindings (get @!key-maps element)
@@ -317,7 +308,8 @@ the view location and put it back after the evaluation."
         (events/listen! element :click click!)
         (events/listen! element :mousedown right-or-middle-mouse-down?)
         (events/listen! element :contextmenu remove-context-menu-if-needed)
-        (events/listen! element :focus reset-all!))))
+        ;(events/listen! element :focus reset-all!)
+        )))
 
 (defn- remove-listeners! [listener-keys element]
   (remove-auto-focus-hover element)
