@@ -283,22 +283,23 @@ the view location and put it back after the evaluation."
   "Make the element focusable and auto focus when mouse over. This
   enable the keyboard to fire local events." [element]
   (let [raw-el (first (domina/nodes element))]
-    (when-not (domina/attr raw-el :zyzanie)
+    (when-not (domina/get-data element :zyzanie)
       (when-not (domina/attr raw-el :tabindex)
         (domina/set-attr! element :tabindex "-1"));focusable using JS
       (ef/at element (em/listen :mouseenter (fn [e] (with-constant-position #(.focus raw-el)))))
       (ef/at element (em/listen :mouseleave #(.blur raw-el)))
-      (domina/set-attr! element :zyzanie "true"))))
+      (domina/set-data! element :zyzanie true))))
 
 (defn remove-auto-focus-hover
   "Remove the :mouseenter and :mouseleave event. Unfortunately Enfocus
   doesn't provide event keys like Domina, so we can't be precise."[element]
   (let [raw-element (first (domina/nodes element))]
-    (when (domina/attr raw-element :zyzanie)
+    (when (domina/get-data element :zyzanie)
       (ef/at element (em/remove-listener :mouseenter))
-      (when (= (domina/attr raw-element :tabindex) "0")
+      (ef/at element (em/remove-listener :mouseleave))
+      (when (= (domina/attr raw-element :tabindex) "-1")
         (domina/remove-attr! raw-element :tabindex))
-      (domina/remove-attr! raw-element :zyzanie))))
+      (domina/set-data! element :zyzanie nil))))
 
 (defn- add-local-listeners! [element]
   (auto-focus-hover element);because we need to be able to capture keyboard event
