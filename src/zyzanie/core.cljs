@@ -209,6 +209,7 @@ sequence"
 
 (def !last-valid-keyseq (atom []))
 
+
 (defn- validate-keysequence
   "Check if we match a key sequence. If yes, reset the current key
   sequence add call the associated command."[key event]
@@ -240,13 +241,20 @@ the current key sequence and call the associated command."
     (validate-keysequence key event)))
 
 
-
-(defn- mouse-down! [event]
-  "Similar to key-down!, but this time we get which mouse button was
-pressed."
+(defn- right-or-middle-mouse-down?
+  "Check if the right mouse button is pressed. (It can't be obtained by
+  looking at the :click event.)"[event]
   (let [raw-event (events/raw-event event)
         key (keyword (str "m" (.-button raw-event)))]
-    (validate-keysequence key event)))
+    (when (some #{key} [:m1 :m2])
+      (validate-keysequence key event))))
+  
+(defn- click! [event]
+  "Make sure we only take the left-button."
+  (let [raw-event (events/raw-event event)
+        key (keyword (str "m" (.-button raw-event)))]
+    (when (some #{key} [:m0])
+      (validate-keysequence key event))))
 
 (defn- remove-context-menu-if-needed
   "If the mouse right button is needed for a local keybinding, remove
@@ -256,7 +264,6 @@ pressed."
         chord (get-chord :m2 element)]
     (when (some #(some (fn [a] (= chord a)) %) (keys local-keymap))
       (events/prevent-default event))))
-
 
 (defn- clear-modifier! [event]
   (let [key (canonicalize-command-key
@@ -270,6 +277,16 @@ pressed."
   (reset-mods!))
 
 
+(defn- with-constant-position
+  "Browsers tend to change the view when an object is focused. Save
+the view location and put it back after the evaluation."
+  [func]
+  (let [positionY js/window.pageYOffset
+        positionX js/window.pageXOffset]
+    (func)
+    (js/scrollTo positionX positionY)))
+
+
 (defn auto-focus-hover
   "Make the element focusable and auto focus when mouse over. This
   enable the keyboard to fire local events." [element]
@@ -277,7 +294,7 @@ pressed."
     (when-not (domina/attr raw-el :zyzanie)
       (when-not (domina/attr raw-el :tabindex)
         (domina/set-attr! element :tabindex "-1"));focusable using JS
-      (ef/at element (em/listen :mouseenter #(.focus raw-el)))
+      (ef/at element (em/listen :mouseenter (fn [e] (with-constant-position #(.focus raw-el)))))
       (ef/at element (em/listen :mouseleave #(.blur raw-el)))
       (domina/set-attr! element :zyzanie "true"))))
 
@@ -291,19 +308,19 @@ pressed."
         (domina/remove-attr! raw-element :tabindex))
       (domina/remove-attr! raw-element :zyzanie))))
 
-
 (defn- add-local-listeners! [element]
+  (auto-focus-hover element);because we need to be able to capture keyboard event
   (into []
         (concat 
         (events/listen! element :keydown key-down!)
         (events/listen! element :keyup clear-modifier!)
-        (events/listen! element :mousedown mouse-down!)
+        (events/listen! element :click click!)
+        (events/listen! element :mousedown right-or-middle-mouse-down?)
         (events/listen! element :contextmenu remove-context-menu-if-needed)
         (events/listen! element :focus reset-all!))))
-;; We can't use the :click event because some browsers only use it for
-;; the left mouse button.
 
 (defn- remove-listeners! [listener-keys element]
+  (remove-auto-focus-hover element)
   (doseq [l-key listener-keys]
     (events/unlisten-by-key! l-key)))
 
