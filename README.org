@@ -1,10 +1,13 @@
 * Zyzanie
+   [[./zyzanie/raw/master/zizanie.jpg]]
 
 Emacs-like key bindings in your browser!
 
 And like emacs, you can rebind them on-the-fly!
 
 =C-g= will cancel any started key sequence.
+
+Inspired by [[https://github.com/AndreasKostler/dyscord]]
 
 * Usage
 Simply add =[zyzanie "0.2.0"]= in your project dependencies.
