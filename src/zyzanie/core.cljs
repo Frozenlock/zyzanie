@@ -189,7 +189,7 @@ sequence"
   (reset! !keyseq {}))
 
 (defn- modifier-pressed? [element]
-  (some (fn [[_ v]] (true? v)) @mods)))
+  (some (fn [[_ v]] (true? v)) @mods))
 
 
 (defn- prevent-default-if-needed
