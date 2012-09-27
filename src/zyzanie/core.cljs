@@ -158,6 +158,8 @@ sequence"
 
 (def modifier {16 false 18 false 17 false 91 false})
 
+(def mods (atom modifier))
+
 (defn- reset-mods! []
   (reset! mods modifier))
 
