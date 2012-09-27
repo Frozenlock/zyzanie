@@ -260,10 +260,9 @@ the current key sequence and call the associated command."
 
 (defn- clear-modifier! [event]
   (let [key (canonicalize-command-key
-             (.-keyCode (events/raw-event event)))
-        element (events/current-target event)]
+             (.-keyCode (events/raw-event event)))]
     (when (modifier? key)
-      (set-modifier! key element false))))
+      (swap! mods assoc key false))))
 
 (defn reset-all! [event]
   (reset-keyseq!)
