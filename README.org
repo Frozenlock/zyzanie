@@ -10,7 +10,7 @@ And like emacs, you can rebind them on-the-fly!
 Inspired by [[https://github.com/AndreasKostler/dyscord]]
 
 * Usage
-Simply add =[zyzanie "0.2.2"]= in your project dependencies.
+Simply add =[zyzanie "0.2.3"]= in your project dependencies.
 
 ** Key binding
    #+BEGIN_SRC clojure
