@@ -281,13 +281,15 @@ the view location and put it back after the evaluation."
 
 (defn auto-focus-hover
   "Make the element focusable and auto focus when mouse over. This
-  enable the keyboard to fire local events." [element]
+  enable the keyboard to fire local events. If no-blur is non nil,
+  don't blur the element when the mouse exits it."
+  [element &{:keys [no-blur]}]
   (let [raw-el (first (domina/nodes element))]
     (when-not (domina/get-data element :zyzanie)
       (when-not (domina/attr raw-el :tabindex)
         (domina/set-attr! element :tabindex "-1"));focusable using JS
       (ef/at element (em/listen :mouseenter (fn [e] (with-constant-position #(.focus raw-el)))))
-      (ef/at element (em/listen :mouseleave #(.blur raw-el)))
+      (when-not no-blur (ef/at element (em/listen :mouseleave #(.blur raw-el))))
       (domina/set-data! element :zyzanie true))))
 
 (defn remove-auto-focus-hover
