@@ -222,6 +222,7 @@ sequence"
         (prevent-default-if-needed key-bindings chord event)
         (when-not (nil? found-key-handler);; see if key-seq is complete
           (let [handler (val found-key-handler)]
+            (events/prevent-default event)
             (events/stop-propagation event)
             (reset! !last-valid-keyseq (first found-key-handler))
             (call-hooks event element)
