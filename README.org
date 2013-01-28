@@ -10,7 +10,7 @@ And like emacs, you can rebind them on-the-fly!
 Inspired by [[https://github.com/AndreasKostler/dyscord]]
 
 * Usage
-Simply add =[zyzanie "0.2.3"]= in your project dependencies.
+Simply add =[zyzanie "0.2.4"]= in your project dependencies.
 
 ** Key binding
    #+BEGIN_SRC clojure
@@ -52,7 +52,7 @@ Simply add =[zyzanie "0.2.3"]= in your project dependencies.
 
    Mouse buttons:
    
-   =mouseleft=, =mouseright=, =mousemiddle=, =mouse0=, =mouse1=, =mouse2=
+   =mouseleft=, =mouseright=, =mousemiddle=, =mouse0=, =mouse1=, =mouse2=, =mwheelup=, =mwheeldown=.
 
    Please note that the middle and right button are associated to the
    =:mousedown= event, but that the left button is associated with the
@@ -182,6 +182,6 @@ You can unset key sequences with the following:
    
 * License
 
-Copyright © 2012 Frozenlock
+Copyright © 2013 Frozenlock
 
 Distributed under the Eclipse Public License, the same as Clojure.

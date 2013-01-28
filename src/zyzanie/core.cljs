@@ -3,7 +3,9 @@
             [domina :as domina]
             [domina.events :as events]
             [enfocus.core :as ef]
-            [clojure.string :as string])
+            [clojure.string :as string]
+            [goog.events :as ge]
+            [goog.events.MouseWheelHandler])
   (:require-macros [enfocus.macros :as em]))
 
 
@@ -92,7 +94,9 @@ sequence"
    "mouse2" :m2
    "mouseright" :m2
    "mouse1" :m1
-   "mousemiddle" :m1})
+   "mousemiddle" :m1
+   "mwheelup" :mwheel-up
+   "mwheeldown" :mwheel-down})
 
 (def special-ks
   { "backspace" 8
@@ -249,6 +253,14 @@ the current key sequence and call the associated command."
     (when (some #{key} [:m0])
       (validate-keysequence key event))))
 
+(defn- mwheel! [event]
+  "Check if we scroll up or down."
+  (let [raw-event (events/raw-event event)
+        key (if (pos? (.-event_.wheelDeltaY raw-event))
+              :mwheel-up
+              :mwheel-down)]
+    (validate-keysequence key event)))
+
 (defn- remove-context-menu-if-needed
   "If the mouse right button is needed for a local keybinding, remove
   the context menu" [event]
@@ -312,6 +324,7 @@ the view location and put it back after the evaluation."
         (events/listen! element :click click!)
         (events/listen! element :mousedown right-or-middle-mouse-down?)
         (events/listen! element :contextmenu remove-context-menu-if-needed)
+        (events/listen! element "mousewheel" mwheel!)
         ;(events/listen! element :focus reset-all!)
         )))
 
