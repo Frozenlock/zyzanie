@@ -1,5 +1,5 @@
 * Zyzanie
-   [[./zyzanie/raw/master/zizanie.gif]]
+  [[./zizanie.gif]]
 
 Emacs-like key bindings in your browser!
 
